@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_project_cinema/services/moviesService.dart';
 
 class ConsultMovie extends StatelessWidget {
-  const ConsultMovie({super.key});
+  ConsultMovie({super.key});
+  MoviesService moviesService=MoviesService(); 
 
   @override
   Widget build(BuildContext context) {
@@ -28,37 +30,27 @@ class ConsultMovie extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
-      child: ListView(
-        children: [
-          consultMovie(),
-          _item(
-              "La Monja",
-              'https://www.cartelera.com.uy/imagenes_espectaculos/moviedetail13/24881.jpg',
-              "Terror",
-              "PG +18",
-              "Cuando una joven monja en una abadía de clausura en Rumania se quita la vida, el Vaticano envía a un sacerdote con un pasado atormentado."),
-          const SizedBox(height: 20),
-          _item(
-              "La Huerfana",
-              'https://www.supercines.com/MovieImages/20220901Mov001/xxhdpi.jpg',
-              "Terror",
-              "PG +18",
-              "EL ORIGEN narra la historia de Leena Klammer, quien orquesta un escape brillante de un manicomio Ruso y viaja a Estados Unidos."),
-          const SizedBox(height: 20),
-          _item(
-              "Spider-man: Sin Camino a Casa",
-              'https://www.supercines.com/MovieImages/20211126Mov001/xxhdpi.jpg',
-              "Ciencia Ficcion",
-              "PG",
-              "Por primera vez en la historia cinematográfica de Spider-Man, nuestro héroe, vecino y amigo es desenmascarado."),
-          const SizedBox(height: 20),
-          _item(
-              "Mi Dulce Monstruo",
-              'https://www.supercines.com/MovieImages/20220818Mov002/xxhdpi.jpg',
-              "Animacion",
-              "PG",
-              "La princesa Bárbara está secretamente enamorada del príncipe Edward. Cuando el astuto empleado de correos Joyce pide al rey que lo case con Bárbara, ella huye."),
-        ],
+      child:FutureBuilder(
+        future:moviesService.fetchMovies(),
+        builder: (BuildContext context, AsyncSnapshot snapshot){
+          print(snapshot);
+          if(snapshot.connectionState==ConnectionState.waiting){
+            return const Center(child:CircularProgressIndicator());
+          }
+          else{
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index){
+                return _item(
+              snapshot.data[index].title,
+              snapshot.data[index].imgUrl,
+              snapshot.data[index].gender,
+              snapshot.data[index].classification,
+              snapshot.data[index].sinopsis);
+              },
+            );
+          }
+        }
       ),
     );
   }

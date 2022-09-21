@@ -72,7 +72,7 @@ class Home extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => const ConsultMovie())));
+              MaterialPageRoute(builder: ((context) => ConsultMovie())));
         },
         style: TextButton.styleFrom(backgroundColor: Colors.amber),
         child: const Text("Consultar"),
