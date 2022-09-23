@@ -70,6 +70,7 @@ class ConsultMovie extends StatelessWidget {
       String sinopsis) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      margin:const EdgeInsets.symmetric( vertical: 10),
       decoration: const BoxDecoration(
         border: Border(
           top: BorderSide(color: Colors.red),
