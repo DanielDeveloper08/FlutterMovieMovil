@@ -109,7 +109,7 @@ class Home extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: ((context) => const ConsultProduct())));
+                  builder: ((context) => ConsultProduct())));
         },
         style: TextButton.styleFrom(backgroundColor: Colors.amber),
         child: const Text("Consultar"),

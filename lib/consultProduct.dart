@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-
+import 'package:flutter_project_cinema/services/productService.dart';
 class ConsultProduct extends StatelessWidget {
-  const ConsultProduct({super.key});
+  ConsultProduct({super.key});
+  ProductService moviesService=ProductService(); 
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +29,28 @@ class ConsultProduct extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
-      child: ListView(
-        children: [
-          consultProduct(),
-          _item("COMBO IMAX", "1 CANGUIL IMAX +1 BEBIDA 44 OZ", 11.00,
-              "https://servicios.supercines.com:2211/Images/BarProducts/20210831Bar001/xxhdpi.jpg"),
-          const SizedBox(height: 20),
-          _item("COMBO IMAX", "1 CANGUIL IMAX +1 BEBIDA 44 OZ", 11.00,
-              "https://servicios.supercines.com:2211/Images/BarProducts/20210831Bar001/xxhdpi.jpg"),
-          const SizedBox(height: 20),
-          _item("COMBO IMAX", "1 CANGUIL IMAX +1 BEBIDA 44 OZ", 11.00,
-              "https://servicios.supercines.com:2211/Images/BarProducts/20210831Bar001/xxhdpi.jpg"),
-          const SizedBox(height: 20),
-          _item("COMBO IMAX", "1 CANGUIL IMAX +1 BEBIDA 44 OZ", 11.00,
-              "https://servicios.supercines.com:2211/Images/BarProducts/20210831Bar001/xxhdpi.jpg"),
-          const SizedBox(height: 20),
-        ],
-      ),
+      child:FutureBuilder(
+        future:moviesService.fetchMovies(),
+        builder: (BuildContext context, AsyncSnapshot snapshot){
+          print(snapshot);
+          if(snapshot.connectionState==ConnectionState.waiting){
+            return const Center(child:CircularProgressIndicator());
+          }
+          else{
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index){
+                return _item(
+              snapshot.data[index].name,
+              snapshot.data[index].description,
+              snapshot.data[index].price,
+              snapshot.data[index].imgUrl);
+              },
+            );
+          }
+        }
+      ), 
+      
     );
   }
 
@@ -63,6 +69,7 @@ class ConsultProduct extends StatelessWidget {
       String nombre, String descripcion, double precio, String imagen) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      margin:const EdgeInsets.symmetric(vertical: 10),
       decoration: const BoxDecoration(
         border: Border(
           top: BorderSide(color: Colors.black54),
@@ -77,7 +84,7 @@ class ConsultProduct extends StatelessWidget {
             bottomRight: Radius.circular(10)),
         boxShadow: [
           BoxShadow(
-            color: Colors.yellow,
+            color: Color(0xffff9900),
             blurRadius: 4,
             offset: Offset(4, 8), // Shadow position
           ),
