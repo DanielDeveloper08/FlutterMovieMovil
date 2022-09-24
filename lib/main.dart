@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project_cinema/home.dart';
 import 'package:flutter_project_cinema/reset_password.dart';
 import 'package:flutter_project_cinema/signup_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -33,8 +36,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TextEditingController _passwordTextController = TextEditingController();
-  TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _passwordTextController = TextEditingController();
+  final TextEditingController _emailTextController = TextEditingController();
 
   /*FirebaseAuth auth = FirebaseAuth.instance;
   String email = '', contrasena = '';*/
@@ -72,8 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
             campoPassword(),
             const SizedBox(height: 30),
             botonIniciarSesion(),
-            const SizedBox(height: 10),
-            /*recuperarContrasena()*/ forgetPassword(),
+            forgetPassword(),
             const SizedBox(height: 90),
             botonRegistrarse()
           ],
@@ -113,26 +115,39 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget botonIniciarSesion() {
-    return SizedBox(
-      height: 40,
-      child: ElevatedButton(
-        onPressed: () {
+    return firebaseUIButton(context, "Sign In", () {
+      if (_emailTextController.text.isNotEmpty &&
+          _passwordTextController.text.isNotEmpty) {
+        FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: _emailTextController.text,
+                password: _passwordTextController.text)
+            .then((value) {
           Navigator.push(
-              context, MaterialPageRoute(builder: ((context) => const Home())));
-        },
-        style: TextButton.styleFrom(backgroundColor: Colors.red),
-        child: const Text("Iniciar Sesion"),
-      ),
-    );
-  }
-
-  Widget recuperarContrasena() {
-    return const Text(
-      "¿Olvidaste tu contraseña?",
-      style: TextStyle(
-          color: Colors.white, fontSize: 12.0, fontWeight: FontWeight.bold),
-      textAlign: TextAlign.center,
-    );
+              context, MaterialPageRoute(builder: (context) => const Home()));
+        }).onError((error, stackTrace) {
+          print("Error ${error.toString()}");
+        });
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Alerta'),
+                content: SingleChildScrollView(
+                  child: ListBody(children: const [
+                    Text('Campos vacios, por favor ingrese los datos'),
+                  ]),
+                ),
+                actions: [
+                  ElevatedButton(
+                      onPressed: (() => Navigator.of(context).pop()),
+                      child: const Text("Aceptar")),
+                ],
+              );
+            });
+      }
+    });
   }
 
   Widget botonRegistrarse() {
@@ -145,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         style: TextButton.styleFrom(backgroundColor: Colors.yellow),
         child: const Text(
-          "Registrarse",
+          "Sign Up",
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -189,11 +204,41 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TextButton(
         child: const Text(
           "Forgot Password?",
-          style: TextStyle(color: Colors.white70),
+          style: TextStyle(color: Colors.white),
           textAlign: TextAlign.right,
         ),
         onPressed: () => Navigator.push(context,
             MaterialPageRoute(builder: (context) => const ResetPassword())),
+      ),
+    );
+  }
+
+  Container firebaseUIButton(
+      BuildContext context, String title, Function onTap) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 50,
+      margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(90)),
+      child: ElevatedButton(
+        onPressed: () {
+          onTap();
+        },
+        child: Text(
+          title,
+          style: const TextStyle(
+              color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.resolveWith((states) {
+              if (states.contains(MaterialState.pressed)) {
+                return Colors.black26;
+              }
+              return Colors.redAccent;
+            }),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)))),
       ),
     );
   }
