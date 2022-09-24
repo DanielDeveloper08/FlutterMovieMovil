@@ -18,14 +18,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: const MyHomePage(title: 'Project Cinema'),
+      home: const MyHomePage(title: 'Project Cinema',restorationId:'main'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
+  const MyHomePage({super.key, required this.title, this.restorationId});
+  final String? restorationId;
   final String title;
 
   @override
