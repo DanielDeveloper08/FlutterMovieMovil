@@ -106,7 +106,7 @@ class _NewProduct extends State<NewProduct> {
     return Image.file(File(baseImage!));
     else
     return Image.network(
-          'https://cdn-icons-png.flaticon.com/512/2503/2503529.png');
+          'https://cdn-icons-png.flaticon.com/512/4221/4221407.png');
   }
 
   Widget nombreProducto() {
