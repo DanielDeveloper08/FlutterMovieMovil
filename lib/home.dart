@@ -58,7 +58,7 @@ class Home extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => const NewMovie())));
+              MaterialPageRoute(builder: ((context) => NewMovie())));
         },
         style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
         child: const Text("Registrar"),
@@ -93,7 +93,7 @@ class Home extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => const NewProduct())));
+              MaterialPageRoute(builder: ((context) => NewProduct())));
         },
         style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
         child: const Text("Registrar"),
