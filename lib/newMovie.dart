@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter_project_cinema/home.dart';
-import 'package:flutter_project_cinema/models/movie.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_project_cinema/services/moviesService.dart';
 

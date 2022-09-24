@@ -1,5 +1,3 @@
-import 'dart:js_util';
-
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -58,12 +56,12 @@ class ProductService {
     return movie;
   }
 
-  Future<List<Type>> fetchTypes() async {
+  Future<List<Type>> fetchGenders() async {
     
     List<Type> genders=[];
     try {
       Uri uri =
-          Uri.parse('https://cinemaws-production.up.railway.app/api/v1/types');
+          Uri.parse('https://cinemaws-production.up.railway.app/api/v1/genders');
       final response = await http.get(uri);
       if (response.statusCode == 200) {
         dynamic results = await jsonDecode(response.body);

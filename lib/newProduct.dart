@@ -1,8 +1,27 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter_project_cinema/home.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_project_cinema/services/productService.dart';
 
-class NewProduct extends StatelessWidget {
+class NewProduct extends StatefulWidget{
   const NewProduct({super.key});
+  @override
+  State<NewProduct> createState() => _NewProduct();
+}
+class _NewProduct extends State<NewProduct> {
+
+
+  ProductService moviesService = ProductService();
+  var product = <String, String>{
+    "name": "",
+    "price": "",
+    "image_url": "",
+    "type_id": "1",
+    "description": "",
+    "status": "A"
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +49,7 @@ class NewProduct extends StatelessWidget {
       child: ListView(children: [
         newProducto(),
         imagen(context),
+        botonImagen(context),
         nombreProducto(),
         descripcionProducto(),
         precioProducto(),
@@ -49,6 +69,17 @@ class NewProduct extends StatelessWidget {
     );
   }
 
+  String? baseImage;
+
+  Future<void> chooseImage() async {
+    var choosedimage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+        setState(() {
+          baseImage = choosedimage!.path;
+        });
+          
+  }
+
   Widget newProducto() {
     return const Padding(
       padding: EdgeInsets.only(top: 15, bottom: 15),
@@ -66,13 +97,21 @@ class NewProduct extends StatelessWidget {
       width: double.infinity,
       height: (screenWidth - 80.0) * 2.0 / 4.0,
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
-      child: Image.network(
-          'https://cdn-icons-png.flaticon.com/512/4221/4221407.png'),
-    );
+      child: image()
+      );
+  }
+
+  Widget image(){
+    if(baseImage!=null && !baseImage!.isEmpty)
+    return Image.file(File(baseImage!));
+    else
+    return Image.network(
+          'https://cdn-icons-png.flaticon.com/512/2503/2503529.png');
   }
 
   Widget nombreProducto() {
     return TextFormField(
+      onChanged: (value) => product['name']=value,
         decoration: const InputDecoration(
             border: UnderlineInputBorder(),
             labelText: 'Nombre del producto',
@@ -81,6 +120,7 @@ class NewProduct extends StatelessWidget {
 
   Widget descripcionProducto() {
     return TextFormField(
+      onChanged: (value) => product['description']=value,
       decoration: const InputDecoration(
           border: UnderlineInputBorder(),
           labelText: 'Descripcion',
@@ -90,6 +130,7 @@ class NewProduct extends StatelessWidget {
 
   Widget precioProducto() {
     return TextFormField(
+      onChanged: (value) => product['price']=value,
       decoration: const InputDecoration(
           border: UnderlineInputBorder(),
           labelText: 'Precio',
@@ -102,7 +143,12 @@ class NewProduct extends StatelessWidget {
       width: 100,
       height: 30,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          if (baseImage != null) {
+            moviesService.saveMovie(baseImage!, json.encode(product).toString());
+            
+          }
+        },
         style: TextButton.styleFrom(backgroundColor: Colors.amber),
         child: const Text("Guardar"),
       ),
@@ -122,5 +168,20 @@ class NewProduct extends StatelessWidget {
         child: const Text("Cancelar"),
       ),
     );
+  }
+  Widget botonImagen(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 100),
+        child: SizedBox(
+          width: 50,
+          height: 30,
+          child: ElevatedButton(
+            onPressed: () {
+              chooseImage();
+            },
+            style: TextButton.styleFrom(backgroundColor: Colors.grey),
+            child: const Text("Subir Imágen"),
+          ),
+        ));
   }
 }
